@@ -18,6 +18,7 @@ class Server
       run Directory.new(Dir.pwd)
     end
 
+    Database.create_if_missing()
     puts "Serving static content from #{Dir.pwd}"
 
     Handler::Thin.run app, :Port => PORT
