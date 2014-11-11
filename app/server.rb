@@ -2,12 +2,11 @@ class Server
 
   PORT = 9292
   include Rack
-  require './app/crawler'
   
-  attr_reader :exit
+  attr_reader :terminated
   
   def run
-    @exit = false
+    @terminated = false
     app = Builder.new do 
       use Rewrite do
         rewrite '/', '/index.html'
@@ -22,20 +21,11 @@ class Server
       run Directory.new(Dir.pwd)
     end
     
-    crawler = Thread.new {
-      # TODO: replace with DTO for data to share
-      Crawler.new.run(self)
-    }
-
     Database.create_if_missing()
     puts "Serving static content from #{Dir.pwd}"
 
     Handler::Thin.run app, :Port => PORT
-    
-    @exit = true
-    puts 'Waiting for crawler to terminate ...'
-    crawler.join
-    
-    puts 'Bye!'
+        
+    @terminated = true
   end
 end

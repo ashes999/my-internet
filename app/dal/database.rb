@@ -25,28 +25,8 @@ class Database # static class
   def self.execute(query)
     begin        
       db = SQLite3::Database.new(DB_FILE)
-      return db.execute(query)
-    ensure
-      db.close if db
-    end
-  end
-  
-  def self.search_for(query)
-    words = query.split
-    
-    # Keep it in the same order
-    sql = 'SELECT * FROM pages WHERE '
-    for n in (0 ... words.length) do
-      word = words[n]
-      sql += "as_text LIKE '%#{word}%'"
-      sql += ' OR ' if n < words.length - 1
-    end    
-    sql += ';'
-    
-    begin        
-      db = SQLite3::Database.new(DB_FILE)
       db.results_as_hash = true
-      return db.execute(sql)
+      return db.execute(query)
     ensure
       db.close if db
     end

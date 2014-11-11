@@ -1,6 +1,6 @@
 class Search
   require 'cgi'
-  require './app/dal/database'
+  require './app/dal/queries'
 
   # TODO: separate content from presentation?
   def handle_search(env)
@@ -8,7 +8,7 @@ class Search
     query = query_string[query_string.index('q=') + 2, query_string.length]
     query = CGI::unescape(query)
     
-    results = Database.search_for(query)
+    results = Queries.search_for(query)
     # common header. TODO: DRY it.
     html = '<html><body>'
     html += '<form action="search" method="GET"><input id="q" name="q" /></form>'

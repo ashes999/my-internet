@@ -40,6 +40,10 @@ SQL
         last_indexed_on datetime,
         FOREIGN KEY (site_id) REFERENCES sites(site_id)
       );')
+      
+      Database.execute('CREATE TABLE IF NOT EXISTS pageQueue (
+        url varchar(255)
+      );')
         
       Database.execute('INSERT INTO version VALUES (1, datetime());')        
     end
