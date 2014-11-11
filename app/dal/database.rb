@@ -17,8 +17,6 @@ class Database # static class
     begin        
       db = SQLite3::Database.new(DB_FILE)
       return db.get_first_value(query)
-    rescue SQLite3::Exception => e         
-      puts "Exception occurred: #{e}"
     ensure
       db.close if db
     end
@@ -28,8 +26,27 @@ class Database # static class
     begin        
       db = SQLite3::Database.new(DB_FILE)
       return db.execute(query)
-    rescue SQLite3::Exception => e         
-      puts "Exception occurred: #{e}"
+    ensure
+      db.close if db
+    end
+  end
+  
+  def self.search_for(query)
+    words = query.split
+    
+    # Keep it in the same order
+    sql = 'SELECT * FROM pages WHERE '
+    for n in (0 ... words.length) do
+      word = words[n]
+      sql += "as_text LIKE '%#{word}%'"
+      sql += ' OR ' if n < words.length - 1
+    end    
+    sql += ';'
+    
+    begin        
+      db = SQLite3::Database.new(DB_FILE)
+      puts "search query: #{sql}"
+      return db.execute(sql)
     ensure
       db.close if db
     end

@@ -25,22 +25,26 @@ SQL
     
     # Try to make these idempotent
     if (current_version.nil? || current_version < 1) then
-      Database.execute <<SQL
-        CREATE TABLE IF NOT EXISTS sites (
+      Database.execute('CREATE TABLE IF NOT EXISTS sites (
           site_id integer PRIMARY KEY AUTOINCREMENT,
           domain varchar(255)
-        );
-SQL        
-      Database.execute <<SQL
-        CREATE TABLE IF NOT EXISTS pages (
+        );')
+
+      Database.execute('CREATE TABLE IF NOT EXISTS pages (
+          page_id integer PRIMARY KEY AUTOINCREMENT,
           original_url varchar(255),
           filename varchar(255),
           as_text text
-        );
-SQL
-      Database.execute <<SQL        
-        INSERT INTO version VALUES (1, datetime());
-SQL
+        );')
+
+      Database.execute('CREATE TABLE IF NOT EXISTS pages (
+          page_id integer PRIMARY KEY AUTOINCREMENT,
+          original_url varchar(255),
+          filename varchar(255),
+          as_text text
+        );')
+        
+      Database.execute('INSERT INTO version VALUES (1, datetime());')        
     end
   end
 end
