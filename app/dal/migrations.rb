@@ -33,15 +33,11 @@ SQL
       Database.execute('CREATE TABLE IF NOT EXISTS pages (
           page_id integer PRIMARY KEY AUTOINCREMENT,
           original_url varchar(255),
+          title varchar(255),
           filename varchar(255),
-          as_text text
-        );')
-
-      Database.execute('CREATE TABLE IF NOT EXISTS pages (
-          page_id integer PRIMARY KEY AUTOINCREMENT,
-          original_url varchar(255),
-          filename varchar(255),
-          as_text text
+          as_text text,
+          site_id integer,
+          FOREIGN KEY (site_id) REFERENCES sites(site_id)
         );')
         
       Database.execute('INSERT INTO version VALUES (1, datetime());')        

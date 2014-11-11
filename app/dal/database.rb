@@ -45,7 +45,7 @@ class Database # static class
     
     begin        
       db = SQLite3::Database.new(DB_FILE)
-      puts "search query: #{sql}"
+      db.results_as_hash = true
       return db.execute(sql)
     ensure
       db.close if db
