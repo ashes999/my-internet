@@ -26,19 +26,20 @@ SQL
     # Try to make these idempotent
     if (current_version.nil? || current_version < 1) then
       Database.execute('CREATE TABLE IF NOT EXISTS sites (
-          site_id integer PRIMARY KEY AUTOINCREMENT,
-          domain varchar(255)
-        );')
+        site_id integer PRIMARY KEY AUTOINCREMENT,
+        domain varchar(255)
+      );')
 
       Database.execute('CREATE TABLE IF NOT EXISTS pages (
-          page_id integer PRIMARY KEY AUTOINCREMENT,
-          original_url varchar(255),
-          title varchar(255),
-          filename varchar(255),
-          as_text text,
-          site_id integer,
-          FOREIGN KEY (site_id) REFERENCES sites(site_id)
-        );')
+        page_id integer PRIMARY KEY AUTOINCREMENT,
+        original_url varchar(255),
+        title varchar(255),
+        filename varchar(255),
+        as_text text,
+        site_id integer,
+        last_indexed_on datetime,
+        FOREIGN KEY (site_id) REFERENCES sites(site_id)
+      );')
         
       Database.execute('INSERT INTO version VALUES (1, datetime());')        
     end
