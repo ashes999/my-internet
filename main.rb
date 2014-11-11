@@ -5,9 +5,22 @@ require 'rack-rewrite'
 
 require './app/server'
 require './app/crawler'
+require './app/dal/queries'
+require './app/utils/logger'
 
-# Check if sites.txt is defined. Prompt if not.
+Logger.init('my_internet')
+Database.create_if_missing
+
+# Check if sites.txt is defined. 
 # Put sites.txt into the queue.
+if (!File.exist?('sites.txt'))
+  # TODO: prompt instead of failing.
+  raise 'Please define a sites.txt file with one line per domain to index'
+end
+domains = File.read('sites.txt').split
+domains.each do |d|
+  Queries.add_to_queue(d)
+end
 
 server = Server.new
 

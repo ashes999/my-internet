@@ -13,20 +13,20 @@ class Database # static class
   
   # TODO: handle upgrades (migrations?)
 
-  def self.execute_scalar(query)
+  def self.execute_scalar(query, parameters = [])
     begin        
       db = SQLite3::Database.new(DB_FILE)
-      return db.get_first_value(query)
+      return db.get_first_value(query, parameters)
     ensure
       db.close if db
     end
   end
   
-  def self.execute(query)
+  def self.execute(query, parameters = [])
     begin        
       db = SQLite3::Database.new(DB_FILE)
       db.results_as_hash = true
-      return db.execute(query)
+      return db.execute(query, parameters)
     ensure
       db.close if db
     end

@@ -1,6 +1,7 @@
 class Crawler    
   require 'net/http'
   require './app/dal/queries'
+  require './app/html_processor'
   
   THROTTLE_STOP = 7     # 7am
   THROTTLE_START = 19   # 7pm
@@ -27,9 +28,23 @@ class Crawler
   end
   
   def crawl_and_update_index(url)
+    processor = HtmlProcessor.new
+    
     html = http_get(url)
-    data = HtmlProcessor.new.process(url, html)
+    data = processor.process(url, html)
     Queries.index(data)
+    
+    links = processor.get_links(data[:domain], html)
+    sites = Queries.get_sites
+    links.each do |l|
+      # Only include links to stuff that's already an indexed site
+      sites.each do |s|
+        if l.include?(s)
+          Queries.add_to_queue(l)
+          break
+        end
+      end
+    end
     store_as_file(data)
   end
   
@@ -44,12 +59,14 @@ class Crawler
   end
   
   def http_get(url)
-    return Net::HTTP.get(URI.parse(url))
+    return Net::HTTP.get(URI.parse("http://#{url}"))
   end
   
   def store_as_file(data)
     filename = data[:filename] # includes path, eg. stackoverflow.com/...
     content = data[:raw_html]
-    File.write("data/sites/#{filename}"content)
+    path = filename[0, filename.rindex('/')]
+    FileUtils.mkdir_p("data/sites/#{path}")
+    File.write("data/sites/#{filename}", content)
   end
 end
