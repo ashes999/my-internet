@@ -1,6 +1,8 @@
 class Search
   require 'cgi'
   require './app/dal/queries'
+  
+  SNIPPET_LENGTH = 200 # characters
 
   # TODO: separate content from presentation?
   def handle_search(env)
@@ -16,8 +18,8 @@ class Search
     if results.length == 0
       html += '<p>No results found</p>'
     else
-      results.each do |r|
-        html += to_html(r)
+      results.each do |row|
+        html += to_html(row, query)
       end
     end
     
@@ -26,8 +28,21 @@ class Search
     return html
   end
   
-  def to_html(row)
+  def to_html(row, query)
     # TODO: ERB/templatize.
-    return "<p><a href='#{row['original_url']}'>#{row['title']}</a><br />#{row['as_text']}</p>"
+    html = "<p><a href='/data/sites/#{row['original_url']}'>#{row['title']}</a><br />"
+    html += "<span style='color: #080;'>#{row['original_url']}</span><br />"
+    snippet = row['as_text']
+    
+    # Find the earliest start
+    start = []
+    query.split.each do |s|
+      index = snippet.downcase.index(s.downcase)
+      start.push(index) unless index.nil? || index < 0
+    end
+        
+    snippet = snippet[start.min, SNIPPET_LENGTH]
+    html += "#{snippet}</p>"
+    return html
   end
 end

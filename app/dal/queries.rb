@@ -12,7 +12,7 @@ class Queries
     for n in (0 ... words.length) do
       word = words[n]
       sql += "as_text LIKE '%#{word}%'"
-      sql += ' OR ' if n < words.length - 1
+      sql += ' AND ' if n < words.length - 1
     end    
     sql += ';'
     
