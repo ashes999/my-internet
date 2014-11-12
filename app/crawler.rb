@@ -9,10 +9,19 @@ class Crawler
   UNTHROTTLED_DELAY = 1 # 1s break between requests
   
   def run(server)
+    error = false
+    Logger.info('[Crawler] Crawler started')
     while (!server.terminated) do
-      url = pick_page_to_crawl
-      crawl_and_update_index(url)
-      wait
+      begin
+        url = pick_page_to_crawl
+        Logger.info("[Crawler] Crawling #{url}")
+        puts "#{Time.new} | Crawling #{url}"
+        crawl_and_update_index(url)
+        wait
+      rescue => e
+        Logger.info("Crawler Exception: #{e}")
+        raise e # debug only        
+      end
     end
   end
   
@@ -59,7 +68,8 @@ class Crawler
   end
   
   def http_get(url)
-    return Net::HTTP.get(URI.parse("http://#{url}"))
+    url = "http://#{url}" unless url.include?('://')
+    return Net::HTTP.get(URI.parse(url))
   end
   
   def store_as_file(data)

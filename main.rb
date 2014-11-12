@@ -8,7 +8,7 @@ require './app/crawler'
 require './app/dal/queries'
 require './app/utils/logger'
 
-Logger.init('my_internet')
+Logger.init('service')
 Database.create_if_missing
 
 # Check if sites.txt is defined. 
@@ -29,9 +29,14 @@ crawler = Thread.new {
   Crawler.new.run(server)
 }
 
-server.run
-
-puts 'Waiting for crawler to terminate ...'
-crawler.join
+begin
+  server.run
+  puts 'Waiting for crawler to terminate ...'
+rescue => e
+  Logger.info("Exception: #{e}")
+  raise e
+ensure
+  crawler.join
+end
 
 puts 'Bye!'

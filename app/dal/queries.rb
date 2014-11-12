@@ -16,7 +16,7 @@ class Queries
     end    
     sql += ';'
     
-    return Database.query(sql)
+    return Database.execute(sql)
   end
   
   def self.add_to_queue(url)

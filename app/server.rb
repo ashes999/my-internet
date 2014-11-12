@@ -1,5 +1,7 @@
 class Server
 
+  require './app/search'
+
   PORT = 9292
   include Rack
   
