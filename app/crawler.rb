@@ -44,17 +44,18 @@ class Crawler
     Queries.index(data)
     
     links = processor.get_links(data[:domain], html)
+    puts "Got links: #{links}"
     sites = Queries.get_sites
     links.each do |l|
       # Only include links to stuff that's already an indexed site
       sites.each do |s|
-        if l.include?(s)
+        raise "SITE IS #{s}"
+        if l.include?("://#{s}") || l.include?("://www.#{s}")
           Queries.add_to_queue(l)
           break
         end
       end
     end
-    store_as_file(data)
   end
   
   def wait
@@ -68,15 +69,9 @@ class Crawler
   end
   
   def http_get(url)
-    url = "http://#{url}" unless url.include?('://')
-    return Net::HTTP.get(URI.parse(url))
-  end
-  
-  def store_as_file(data)
-    filename = data[:filename] # includes path, eg. stackoverflow.com/...
-    content = data[:raw_html]
-    path = filename[0, filename.rindex('/')]
-    FileUtils.mkdir_p("data/sites/#{path}")
-    File.write("data/sites/#{filename}", content)
+    # page-requisites and convert-links downloads css, images, etc.
+    # some sites return a 403 if you do this without a user agent; specify one with --user-agent
+    # --reject-regex '(.*)\?(.*)' rejects URLs with query parameters, but only works in 1.14+
+    `wget --page-requisites --html-extension --no-parent --convert-links --wait=1 --user-agent='Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.8.1.6) Gecko/20070802 SeaMonkey/1.1.4' --quiet=on -P data/sites #{url}`
   end
 end
