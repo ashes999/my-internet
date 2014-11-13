@@ -69,11 +69,25 @@ class Queries
     page_id = Database.execute_scalar('SELECT page_id FROM pages WHERE original_url = ?', [url])
     
     # TODO: probably a bad idea, but we have no references. Delete if existing (update = delete + re-insert)
-    if page_id.nil? || page_id == 0 then
+    if !page_id.nil? && page_id > 0 then
       Database.execute('DELETE FROM pages WHERE page_id = ?', [page_id])
     end
     
     Database.execute('INSERT INTO pages (original_url, title, filename, as_text, site_id, last_indexed_on) VALUES (?, ?, ?, ?, ?, ?)', [url, data[:title], data[:filename], data[:as_text], site_id, data[:last_indexed_on].to_s])    
+  end
+  
+  def self.link_file_to_url(filename, url)
+    # Keep only one copy
+    Database.execute('DELETE FROM filenameToUrl WHERE filename = ? AND url = ?', [filename, url])
+    Database.execute('INSERT INTO filenameToUrl (filename, url) values (?, ?)', [filename, url])
+  end
+  
+  def self.url_for_file(filename)
+    return Database.execute_scalar('SELECT url FROM filenameToUrl WHERE filename = ?', [filename])
+  end
+  
+  def self.filename_for_url(url)
+    return Database.execute_scalar('SELECT filename FROM filenameToUrl WHERE url = ?', [url])
   end
   
   private

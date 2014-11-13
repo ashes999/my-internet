@@ -44,6 +44,11 @@ SQL
       Database.execute('CREATE TABLE IF NOT EXISTS pageQueue (
         url varchar(255)
       );')
+      
+      Database.execute('CREATE TABLE IF NOT EXISTS filenameToUrl (
+        filename varchar(255),
+        url varchar(255)
+      );')
         
       Database.execute('INSERT INTO version VALUES (1, datetime());')        
     end
