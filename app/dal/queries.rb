@@ -25,9 +25,6 @@ class Queries
     exists = Database.execute_scalar('SELECT 1 FROM pages where original_url = ?', url) || 0 unless exists == 1
     if exists.nil? || exists == 0
       Database.execute('INSERT INTO pageQueue (url) VALUES (?)', url) 
-      Logger.info("Added #{url} to page queue")
-    else
-      Logger.info("#{url} skipped queue (already added)")
     end
   end
   

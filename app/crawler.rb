@@ -30,8 +30,12 @@ class Crawler
   private
   
   def pick_page_to_crawl
-    new_pages = Queries.get_unindexed_pages    
-    return new_pages.first
+    # We need to balance re-indexing existing pages and crawling new pages
+    # To keep things simple, pick a randomized mix of both.
+    new_pages = Queries.get_unindexed_pages
+    existing_pages = Queries.get_indexed_pages
+    pool = (new_pages + existing_pages).shuffle
+    return pool.first
   end
   
   def wait
