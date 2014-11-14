@@ -55,6 +55,8 @@ class Crawler
     output = `wget --page-requisites --html-extension --no-parent --convert-links --wait=1 --user-agent='Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.8.1.6) Gecko/20070802 SeaMonkey/1.1.4' -P #{@sites_directory} #{url} 2>&1`
     filename = /Saving to: `([^`]+)`/.match(output)[1]
     filename = filename[0, filename.index("'")]
+    # Don't care where the file is; get the relative path
+    filename = filename[filename.index(@sites_directory) + @sites_directory.length, filename.length]
     Queries.link_file_to_url(filename, url)
   end
 end

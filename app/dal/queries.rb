@@ -31,7 +31,6 @@ class Queries
   def self.get_unindexed_pages
     sql = 'SELECT url FROM pageQueue'
     to_return = Database.execute(sql)
-    Logger.info("Got #{to_return.count} un-indexed pages")
     return to_return.collect { |row| row['url'] }
   end
   
@@ -44,7 +43,6 @@ class Queries
   def self.get_indexed_pages
     sql = 'SELECT original_url FROM pages'
     to_return = Database.execute(sql)
-    Logger.info("Got #{to_return.count} indexed pages")
     return to_return.collect { |row| row['original_url'] }
   end
   

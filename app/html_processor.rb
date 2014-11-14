@@ -25,7 +25,12 @@ class HtmlProcessor
   private
   
   def normalize_url(url)
+    # strip out the protocol, and www.
     to_return = url.sub('/www.', '/').sub('http://', '')
+    # strip out the query string
+    to_return = to_return[0, to_return.index('?')] if to_return.include?('?')
+    # strip out the trailing slash
+    to_return = to_return[0, to_return.length - 1] if to_return[-1] = '/'
     return to_return
   end
   

@@ -12,11 +12,12 @@ class Indexer
     processor = HtmlProcessor.new
     Logger.info('[Indexer] Indexer started')
     while !server.terminated do
-      files = Dir.glob('data/sites/**/*.html')
+      files = Dir.glob("#{@sites_directory}/**/*.html")
       Logger.info("[Indexer] #{files.length} files to index")
       files.each do |f|
         html = File.read(f)
-        url = Queries.url_for_file(f)
+        relative_name = f[f.index(@sites_directory) + @sites_directory.length, f.length]
+        url = Queries.url_for_file(relative_name)
         if !url.nil?
           data = processor.process(url, html)
           Queries.index(data)
@@ -32,9 +33,9 @@ class Indexer
               end
             end
           end
-          Logger.info("Indexed #{f}")
+          Logger.info("Indexed #{relative_name}")
         else
-          Logger.info("ERROR: URL not found for #{f}")
+          Logger.info("ERROR: URL not found for #{relative_name}")
         end
       end
       sleep(5) # Shouldn't be necessary since crawling is constant, but beats a busy  loop.
