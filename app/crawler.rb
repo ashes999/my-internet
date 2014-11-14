@@ -53,10 +53,13 @@ class Crawler
     # some sites return a 403 if you do this without a user agent; specify one with --user-agent
     # --reject-regex '(.*)\?(.*)' rejects URLs with query parameters, but only works in 1.14+
     output = `wget --page-requisites --html-extension --no-parent --convert-links --wait=1 --user-agent='Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.8.1.6) Gecko/20070802 SeaMonkey/1.1.4' -P #{@sites_directory} #{url} 2>&1`
-    filename = /Saving to: `([^`]+)`/.match(output)[1]
-    filename = filename[0, filename.index("'")]
-    # Don't care where the file is; get the relative path
-    filename = filename[filename.index(@sites_directory) + @sites_directory.length, filename.length]
-    Queries.link_file_to_url(filename, url)
+    match = /Saving to: `([^`]+)'/.match(output)
+    # Sometimes, this fails to scrape the URL and output. That's okay, just ignore it.
+    if !match.nil?     
+      filename = match[1]
+      # Don't care where the file is; get the relative path
+      filename = filename[filename.index(@sites_directory) + @sites_directory.length, filename.length]
+      Queries.link_file_to_url(filename, url)
+    end
   end
 end

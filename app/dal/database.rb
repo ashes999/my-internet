@@ -17,6 +17,8 @@ class Database # static class
     begin        
       db = SQLite3::Database.new(DB_FILE)
       return db.get_first_value(query, parameters)
+    rescue SQLite3::BusyException
+      retry
     ensure
       db.close if db
     end
@@ -27,6 +29,8 @@ class Database # static class
       db = SQLite3::Database.new(DB_FILE)
       db.results_as_hash = true
       return db.execute(query, parameters)
+    rescue SQLite3::BusyException
+      retry
     ensure
       db.close if db
     end

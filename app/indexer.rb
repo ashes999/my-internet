@@ -33,9 +33,9 @@ class Indexer
               end
             end
           end
-          Logger.info("Indexed #{relative_name}")
         else
-          Logger.info("ERROR: URL not found for #{relative_name}")
+          #Logger.info("ERROR: URL not found for #{relative_name}.")
+          # Seems to be missing because it's being crawled. Right. Now.
         end
       end
       sleep(5) # Shouldn't be necessary since crawling is constant, but beats a busy  loop.

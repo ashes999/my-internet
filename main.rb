@@ -10,11 +10,11 @@ class Main
   require './app/dal/queries'
   require './app/utils/logger'
 
-  SITES_DIRECTORY = '/tmp/my-internet/data/sites'
+  SITES_DIRECTORY = 'data/sites'
   SITES_FILE = 'sites.txt'
     
   def run
-    Logger.init('my_internet')
+    Logger.init('/tmp/my_internet')
     Database.create_if_missing
 
     ### NOTE: without mapping pages to sites, we don't know what to index!
