@@ -1,0 +1,6 @@
+rack
+rack-rewrite
+thin
+logging
+nokogiri
+filewatcher

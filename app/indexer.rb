@@ -37,7 +37,7 @@ class Indexer
           Logger.info("ERROR: URL not found for #{f}")
         end
       end
-      sleep(1) # Shouldn't be necessary since crawling is constant, but beats a busy  loop.
+      sleep(5) # Shouldn't be necessary since crawling is constant, but beats a busy  loop.
     end
   end
 end
